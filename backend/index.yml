@@ -1,0 +1,26 @@
+lessons:
+    - name: "Lesson 1"
+      boxes:
+          - "vlostop10"
+          - "dvwa"
+
+boxes:
+    - name: "vlos"
+      displayname: "Vai Lon Operating System"
+      image: "cu64/vlos"
+      tag: "latest"
+      ports:
+          - host: 9020
+            src: 8080
+            prot: "tcp"
+          - host: 9021
+            src: 5900
+            prot: "tcp"
+    - name: "dvwa"
+      displayname: "Damn Vulnerable Web Application"
+      image: "vulnerables/web-dvwa"
+      tag: "latest"
+    - name: "shellshock"
+      displayname: "ShellShock (CVE-2014-6271)"
+      image: "vulnerables/cve-2014-6271"
+      tag: "latest"
