@@ -1,5 +1,6 @@
 lessons:
-    - name: "Lesson 1"
+    - name: "lesson1"
+      displayname: "Lesson 1"
       boxes:
           - "vlostop10"
           - "dvwa"

@@ -1,43 +1,70 @@
 import yaml
 import docker
 from flask import Flask
+from flask_cors import CORS
 from flask_restx import Resource, Api
 from docker.errors import APIError
-from docker.client import DockerClient
+
 
 app = Flask(__name__)
 api = Api(app)
+CORS(app)
 
 
-def check_network_running():
+def is_network_running():
+    "Returns a boolean whether or not the 'haccthehub' network is started in Docker"
     client = docker.from_env()
     networks = client.networks.list()
     network_names = [net.name for net in networks]
+
     return "haccthehub" in network_names
 
 
-def load_hth_index_file():
+def hth_index():
+    "Returns the parsed HaccTheHub Index file"
     with open("index.yml", "r") as f:
         return yaml.safe_load(f)
 
 
-def hth_boxes_images():
-    hth_if = load_hth_index_file()
-    names = [f"{box['image']}:{box['tag']}" for box in hth_if['boxes']]
+def tags_in_index():
+    "Returns a list of images with the included from the HTH Index file"
+    hth_if = hth_index()
+    tags = [f"{box['image']}:{box['tag']}" for box in hth_if['boxes']]
+
+    return tags
+
+
+def aliases_in_index():
+    "Returns a list of image name WITHOUT tag from the HTH Index file"
+    hth_if = hth_index()
+    names = [box['name'] for box in hth_if['boxes']]
 
     return names
 
 
-def get_hth_image_by_name(name: str):
-    hth_if = load_hth_index_file()
+def alias_to_image_name(name: str):
+    "Returns the image name from the alias in the HTH Index file"
+    hth_if = hth_index()
     for box in hth_if['boxes']:
         if box['name'] == name:
             return box['image']
+
     return None
 
 
-def get_hth_network_by_name(name: str):
-    hth_if = load_hth_index_file()
+def alias_to_tags(name: str):
+    "Returns the image name WITH tags from the alias in the HTH Index file"
+    hth_if = hth_index()
+    for box in hth_if['boxes']:
+        if box['name'] == name:
+            return f"{box['image']}:{box['tag']}"
+
+    return None
+
+
+def name_to_networking_config(name: str):
+    "Returns the port forwarding config from the alias in the HTH Index file"
+    hth_if = hth_index()
     ports = {}
     for box in hth_if['boxes']:
         if box['name'] == name:
@@ -50,13 +77,29 @@ def get_hth_network_by_name(name: str):
                 return None
 
 
-def get_hth_container_by_name(name: str):
+def running_containers_name():
+    "Returns a list of name from running containers"
     client = docker.from_env()
     containers = client.containers.list()
-    for con in containers:
-        if con.name == name:
-            return con
+
+    return [con.name for con in containers]
+
+
+def name_to_container(name: str):
+    client = docker.from_env()
+    containers = client.containers.list()
+    for c in containers:
+        if c.name == name:
+            return c
+
     return None
+
+
+def pulled_images_with_tag():
+    "Returns a list of docker images which both exists on the system and the HTH Index file"
+    client = docker.from_env()
+    images = client.images.list()
+    return [img.tags[0] for img in images if img.tags[0] in tags_in_index()]
 
 
 @api.route('/health_check')
@@ -68,16 +111,14 @@ class HealthCheck(Resource):
 @api.route("/images")
 class Images(Resource):
     def get(self):
-        client = docker.from_env()
-        images = client.images.list()
-        return [img.tags[0] for img in images if img.tags[0] in hth_boxes_images()]
+        return pulled_images_with_tag()
 
 
 @api.route("/images/pull/<string:name>")
 class PullImage(Resource):
     def post(self, name):
         client = docker.from_env()
-        image = get_hth_image_by_name(name)
+        image = alias_to_image_name(name)
         client.images.pull(image)
         return "success"
 
@@ -86,7 +127,7 @@ class PullImage(Resource):
 class Networks(Resource):
     def get(self):
         client = docker.from_env()
-        if not check_network_running():
+        if not is_network_running():
             client.networks.create("haccthehub", "bridge")
             return "started network"
         else:
@@ -94,7 +135,7 @@ class Networks(Resource):
 
     def delete(self):
         client = docker.from_env()
-        if check_network_running():
+        if is_network_running():
             networks = client.networks.list()
             hth_net = [net for net in networks if net.name == "haccthehub"]
             hth_net[0].remove()
@@ -107,21 +148,50 @@ class Networks(Resource):
 class Container(Resource):
     def get(self, name):
         client = docker.from_env()
-        image = get_hth_image_by_name(name)
+        image = alias_to_image_name(name)
         try:
             client.containers.run(
-                image, network="haccthehub", ports=get_hth_network_by_name(name), detach=True, name=name)
+                image, network="haccthehub", ports=name_to_networking_config(name), detach=True, name=name)
             return "success"
         except APIError:
             return "container already started"
 
     def delete(self, name):
-        container = get_hth_container_by_name(name)
+        container = name_to_container(name)
         if container == None:
             return "container already stopped"
         else:
-            container.stop()
+            container.remove(force=True)
+            return "success"
 
+
+@api.route("/boxes/status")
+class Box(Resource):
+    def get(self):
+        "Check for all aliases in HTH Index file and match them against Docker images and containers on the system"
+        names = aliases_in_index()
+        response = []
+        for n in names:
+            box = {}
+            box['name'] = n
+            if n in running_containers_name():
+                box['status'] = "running"
+            # TODO: THIS IS ONLY COMPARING THE HTH NAME TO
+            # TODO: THE IMAGE TAG AND DOES NOT FULLY WORK
+            elif alias_to_tags(n) in pulled_images_with_tag():
+                box['status'] = "pulled"
+            else:
+                box['status'] = "not pulled"
+            response.append(box)
+
+        return response
+
+
+@api.route("/lessons")
+class Lessons(Resource):
+    def get(self):
+        hth_if = hth_index()
+        return [l for l in hth_if['lessons']]
 
 if __name__ == '__main__':
     app.run(port=8000, debug=True)
