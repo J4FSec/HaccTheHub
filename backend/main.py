@@ -51,6 +51,12 @@ def alias_to_image_name(name: str):
 
     return None
 
+def alias_to_display_name(name: str):
+    hth_if = hth_index()
+    for box in hth_if['boxes']:
+        if box['name'] == name:
+            return box['displayname']
+
 
 def alias_to_tags(name: str):
     "Returns the image name WITH tags from the alias in the HTH Index file"
@@ -126,6 +132,9 @@ class PullImage(Resource):
 @api.route("/network")
 class Networks(Resource):
     def get(self):
+        return is_network_running()
+
+    def post(self):
         client = docker.from_env()
         if not is_network_running():
             client.networks.create("haccthehub", "bridge")
@@ -176,12 +185,11 @@ class Box(Resource):
             box['name'] = n
             if n in running_containers_name():
                 box['status'] = "running"
-            # TODO: THIS IS ONLY COMPARING THE HTH NAME TO
-            # TODO: THE IMAGE TAG AND DOES NOT FULLY WORK
             elif alias_to_tags(n) in pulled_images_with_tag():
                 box['status'] = "pulled"
             else:
                 box['status'] = "not pulled"
+            box['display_name'] = alias_to_display_name(n)
             response.append(box)
 
         return response
@@ -192,6 +200,13 @@ class Lessons(Resource):
     def get(self):
         hth_if = hth_index()
         return [l for l in hth_if['lessons']]
+
+@api.route("/lesson/<string:name>")
+class Lesson(Resource):
+    def get(self, name):
+        with open(f"./lessons/{name}.md") as f:
+            content = f.read()
+        return content
 
 if __name__ == '__main__':
     app.run(port=8000, debug=True)

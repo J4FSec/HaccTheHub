@@ -1,13 +1,16 @@
 lessons:
     - name: "lesson1"
-      displayname: "Lesson 1"
+      displayname: "Lesson 1: Learn NMAP Basics"
+      description: "Description TBD"
+      objective: "Gasp the basic of NMAP and it's usage"
+      prerequisites: "Familiar with basic UNIX command line"
       boxes:
-          - "vlostop10"
+          - "vlos"
           - "dvwa"
 
 boxes:
     - name: "vlos"
-      displayname: "Vai Lon Operating System"
+      displayname: "VL Operating System"
       image: "cu64/vlos"
       tag: "latest"
       ports:
