@@ -9,6 +9,8 @@ import {
     Snackbar,
     Alert,
     Link,
+    Tabs,
+    Tab,
 } from "@mui/material";
 import useSWR from "swr";
 import axios from "axios";
@@ -52,7 +54,9 @@ const RenderLessonsCards = ({ lessons }) => {
     return lessons.map((item) => (
         <Card variant="outlined" key={item.name} sx={{ my: 2 }}>
             <CardContent>
-                <Link href={`/lesson/${item.name}`} variant="h5">{item.displayname}</Link>
+                <Link href={`/lesson/${item.name}`} variant="h5">
+                    {item.displayname}
+                </Link>
                 <Typography variant="subtitle1" sx={{ mb: 1 }}>
                     {item.name}
                 </Typography>
@@ -132,6 +136,52 @@ const RenderBoxesCards = ({ status, mutate, setOpen }) => {
     ));
 };
 
+function TabPanel(props) {
+    const { children, value, index, ...other } = props;
+
+    return (
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`simple-tabpanel-${index}`}
+            aria-labelledby={`simple-tab-${index}`}
+            {...other}
+        >
+            {value === index && (
+                <Box sx={{ p: 3 }}>
+                    <Typography>{children}</Typography>
+                </Box>
+            )}
+        </div>
+    );
+}
+
+const LessonTab = ({ lessons }) => {
+    return (
+        <Box>
+            <Typography variant="h3">Lessons</Typography>
+            <RenderLessonsCards lessons={lessons} />
+        </Box>
+    );
+};
+
+const BoxTab = ({ data, mutate, setOpen }) => {
+    return (
+        <Box>
+            <Typography variant="h3">Boxes</Typography>
+            <Grid sx={{ display: "flex" }} container>
+                <Grid item sm>
+                    <Typography variant="h5">Name</Typography>
+                </Grid>
+                <Grid item sm>
+                    <Typography variant="h5">Status</Typography>
+                </Grid>
+            </Grid>
+            <RenderBoxesCards status={data} mutate={mutate} setOpen={setOpen} />
+        </Box>
+    );
+};
+
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
 const Home = () => {
@@ -140,9 +190,13 @@ const Home = () => {
         fetcher
     );
     const [open, setOpen] = React.useState(false);
+    const [tabValue, setTabValue] = React.useState(0);
 
     const handleClose = () => {
         setOpen(false);
+    };
+    const handleChange = (event, newValue) => {
+        setTabValue(newValue);
     };
 
     const lessons = getLessons();
@@ -154,26 +208,16 @@ const Home = () => {
 
     return (
         <Box sx={{ mx: "auto", width: 1400 }}>
-            <Box sx={{ mb: 2 }}>
-                <Typography variant="h3">Lessons</Typography>
-                <RenderLessonsCards lessons={lessons} />
-            </Box>
-            <Box>
-                <Typography variant="h3">Boxes</Typography>
-                <Grid sx={{ display: "flex" }} container>
-                    <Grid item sm>
-                        <Typography variant="h5">Name</Typography>
-                    </Grid>
-                    <Grid item sm>
-                        <Typography variant="h5">Status</Typography>
-                    </Grid>
-                </Grid>
-                <RenderBoxesCards
-                    status={data}
-                    mutate={mutate}
-                    setOpen={setOpen}
-                />
-            </Box>
+            <Tabs value={tabValue} onChange={handleChange} centered>
+                <Tab label="Lessons" />
+                <Tab label="Boxes" />
+            </Tabs>
+            <TabPanel value={tabValue} index={0}>
+                <LessonTab lessons={lessons} />
+            </TabPanel>
+            <TabPanel value={tabValue} index={1}>
+                <BoxTab data={data} mutate={mutate} setOpen={setOpen} />
+            </TabPanel>
             <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
                 <Alert
                     onClose={handleClose}
