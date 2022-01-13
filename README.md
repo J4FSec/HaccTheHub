@@ -1,4 +1,5 @@
 # HaccTheHub
+![](./logo.png)
 Open source self-hosted cyber security learning platform
 
 ## About The Project
