@@ -1,0 +1,9 @@
+<div class="page-title">
+    Lesson
+</div>
+
+<div class="list-box">
+    <ng-container *ngFor="let lesson of listLesson$ | async">
+        <hth-lesson-item [lesson]="lesson"></hth-lesson-item>
+    </ng-container>
+</div>

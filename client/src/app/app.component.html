@@ -1,0 +1,10 @@
+<div class="hth-layout">
+  <hth-header></hth-header>
+  <div class="w-100 h-100 grid hth-body">
+      <hth-sidenav></hth-sidenav>
+      <div class="w-full p-5">
+          <router-outlet></router-outlet>
+      </div>
+  </div>
+</div>
+<hth-loading *ngIf="loading$ | async"></hth-loading>

@@ -1,0 +1,36 @@
+<div class="box-container flex-1">
+    <div class="box-title" [routerLink]="lesson.name">
+        {{lesson.displayname}}
+    </div>
+    <div class="px-6 py-4 text-base">
+        <img src="assets/book.gif" alt="" class="h-28 mb-5 mx-auto">
+        <hr>
+        <div class="lesson-name mt-3">
+            <strong>Name: </strong>
+            {{lesson.name}}
+        </div>
+        <div class="lesson-description mt-3">
+            <strong>Description: </strong>
+            <span>
+                {{lesson.description}}
+            </span>
+        </div>
+        <div class="lesson-objective mt-3">
+            <strong>Objective: </strong>
+            {{lesson.objective}}
+        </div>
+        <div class="lesson-prerequisites mt-3">
+            <strong>Prerequisites: </strong>
+            {{lesson.prerequisites}}
+        </div>
+        <hr class="my-3">
+        <div class="lesson-prerequisites mt-3">
+            <strong>Required box: </strong>
+            <!-- {{lesson.boxes}} -->
+            <ng-container *ngFor="let box of lesson.boxes">
+                <mat-card class="mb-2">{{box}}</mat-card>
+            </ng-container>
+        </div>
+    </div>
+
+</div>

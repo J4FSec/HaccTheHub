@@ -1,0 +1,39 @@
+<div class="page-title">
+    Lesson playground
+</div>
+
+<div class="back-to-lesson-button">
+    <button type="button" routerLink="/lesson">
+        <mat-icon>replay_circle_filled</mat-icon>
+       <span> Back to lesson list</span>
+    </button>
+</div>
+
+<div class="playground-container mt-9 flex flex-nowrap gap-10">
+    <mat-card class="lesson-card w-52">
+        <mat-card-header>
+            <div mat-card-avatar class="lesson-header-image"></div>
+            <mat-card-title>Lesson 1</mat-card-title>
+            <mat-card-subtitle>Description</mat-card-subtitle>
+        </mat-card-header>
+        <mat-divider></mat-divider>
+        <mat-card-content>
+            <mat-stepper orientation="vertical" [linear]="true" #stepper>
+                <mat-step >
+                  Step 1
+                </mat-step>
+                <mat-step >
+                  Step 2
+                </mat-step>
+                <mat-step>
+                  <ng-template matStepLabel>Done</ng-template>
+                  <p>You are now done.</p>
+                </mat-step>
+              </mat-stepper>
+        </mat-card-content>
+    </mat-card>
+    <div class="lesson-content flex-1">
+        <iframe src="https://localhost:8000/vnc.html" >
+        </iframe>
+    </div>
+</div>
