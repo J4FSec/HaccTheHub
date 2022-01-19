@@ -1,0 +1,9 @@
+<div class="page-title">
+    Box
+</div>
+
+<div class="list-box">
+    <ng-container *ngFor="let box of listBox$ | async">
+        <hth-box [box]="box"></hth-box>
+    </ng-container>
+</div>

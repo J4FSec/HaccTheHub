@@ -1,0 +1,33 @@
+<div class="box-container flex-1">
+    <div class="box-title">
+        {{box.display_name}}
+    </div>
+    <div class="px-6 py-4 text-base">
+        <img src="assets/box.png" alt="" class="h-28 mb-5 mx-auto">
+        <hr>
+        <div class="box-name mt-3">
+            <strong>Name: </strong>
+            {{box.name}}
+        </div>
+        <div class="box-status mt-3">
+            <strong>Status: </strong>
+            <span
+                [ngClass]="{'text-green-500': box.status === 'running', 'text-blue-500': box.status === 'pulled', 'text-red-500': box.status === 'not pulled'}">
+                {{box.status}}
+            </span>
+        </div>
+        <hr class="my-3">
+        <div class="box-function flex justify-center gap-3 items-center ">
+            <button type="button" mat-fab [disabled]="box.status !== 'not pulled' || isDisabledButtons" (click)="downloadBox()">
+                <mat-icon>file_download</mat-icon>
+            </button>
+            <button type="button" mat-fab [disabled]="box.status === 'not pulled' || isDisabledButtons" (click)="startBox()">
+                <mat-icon>play_circle</mat-icon>
+            </button>
+            <button type="button" mat-fab [disabled]="box.status === 'not pulled' || isDisabledButtons" (click)="deleteBox()">
+                <mat-icon>delete_forever</mat-icon>
+            </button>
+        </div>
+    </div>
+
+</div>
