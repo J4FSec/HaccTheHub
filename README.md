@@ -1,8 +1,14 @@
 # HaccTheHub
-![](./logo.png)
+<div align="center">
+<img src="images/logo.png" alt="Logo" width="300" 
+height="300">
+</div>
+
 Open source self-hosted cyber security learning platform
 
 ## About The Project
+![](./images/home.png)
+
 HaccTheHub is an open source project that provides cyber security
 
 The HaccTheHub system consists of 3 main parts:
