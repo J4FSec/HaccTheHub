@@ -9,7 +9,9 @@
       text-align: center;
       display: flex;
       align-items: center;
-      text-decoration: underline;
+      span {
+        text-decoration: underline;
+      }
       cursor: pointer;
     }
 

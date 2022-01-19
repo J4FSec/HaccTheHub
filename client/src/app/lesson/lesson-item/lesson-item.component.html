@@ -1,6 +1,7 @@
 <div class="box-container flex-1">
     <div class="box-title" [routerLink]="lesson.name">
-        {{lesson.displayname}}
+        <span class="mr-2">{{lesson.displayname}}</span>
+        <mat-icon>launch</mat-icon>
     </div>
     <div class="px-6 py-4 text-base">
         <img src="assets/book.gif" alt="" class="h-28 mb-5 mx-auto">
