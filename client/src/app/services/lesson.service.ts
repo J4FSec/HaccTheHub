@@ -15,4 +15,8 @@ export class LessonService {
     return this.httpClient.get<Lesson[]>(BASE_URL+"/lessons");
   }
 
+  getLessonByName(name: string): Observable<any> {
+    return this.httpClient.get<any>(BASE_URL + "/lesson/" + name);
+  }
+
 }

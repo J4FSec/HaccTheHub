@@ -11,6 +11,7 @@ import { AppComponent } from './app.component';
 import { HeaderComponent } from './layout/header/header.component';
 import { SidenavComponent } from './layout/sidenav/sidenav.component';
 import { LoadingComponent } from './loading/loading.component';
+import { MarkdownPipe } from './markdown.pipe';
 
 
 @NgModule({

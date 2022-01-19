@@ -9,6 +9,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { CdkStepperModule } from '@angular/cdk/stepper';
 import {MatStepperModule} from '@angular/material/stepper';
 import { MatIconModule } from '@angular/material/icon';
+import { MarkdownPipe } from '../markdown.pipe';
 
 const routes: Routes = [
   {
@@ -22,7 +23,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [LessonComponent, LessonItemComponent, PlaygroundComponent],
+  declarations: [LessonComponent, LessonItemComponent, PlaygroundComponent, MarkdownPipe],
   imports: [
     CommonModule,
     RouterModule.forChild(routes),

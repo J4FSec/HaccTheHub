@@ -25,3 +25,10 @@ body {
 button:disabled {
     opacity: 0.35;
 }
+
+h2, h3, h4 {
+  font-weight: 600 !important;
+}
+code {
+  color: green;
+}
