@@ -1,12 +1,12 @@
 lessons:
-    - name: "lesson1"
-      displayname: "Lesson 1: Learn NMAP Basics"
-      description: "Description TBD"
-      objective: "Gasp the basic of NMAP and it's usage"
+    - name: "nmap_basics"
+      displayname: "Learn nmap Basics"
+      description: "nmap"
+      objective: "Gasp the basic of nmap and it's usage"
       prerequisites: "Familiar with basic UNIX command line"
       boxes:
           - "vlos"
-          - "dvwa"
+          - "nmap_target"
 
 boxes:
     - name: "vlos"
@@ -27,4 +27,8 @@ boxes:
     - name: "shellshock"
       displayname: "ShellShock (CVE-2014-6271)"
       image: "vulnerables/cve-2014-6271"
+      tag: "latest"
+    - name: "nmap_target"
+      displayname: "Nmap Target"
+      image: "cu64/nmap_target"
       tag: "latest"
