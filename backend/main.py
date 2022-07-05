@@ -105,7 +105,7 @@ def pulled_images_with_tag():
     "Returns a list of docker images which both exists on the system and the HTH Index file"
     client = docker.from_env()
     images = client.images.list()
-    return [img.tags[0] for img in images if img.tags[0] in tags_in_index()]
+    return [img.tags[0] for img in images if len(img.tags) >0 if img.tags[0] in tags_in_index()]
 
 
 @api.route('/health_check')
